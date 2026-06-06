@@ -1,0 +1,104 @@
+{{ define "main" }}
+  <div class="container py-5">
+    <div class="row">
+      <!-- Post content -->
+      <div class="col-lg-8">
+        <article>
+          <!-- Post title -->
+          <h1 class="mb-4">{{ .Title }}</h1>
+          
+          <!-- Post metadata (date, author, etc.) -->
+          <p class="text-muted">{{ .Date.Format "January 2, 2006" }}</p>
+          
+          <!-- Thumbnail image (Only renders if an image exists) -->
+          {{ with .Params.thumbnail }}
+          <img src="{{ . }}" class="img-fluid mb-4 rounded shadow-sm" alt="{{ $.Title }}">
+          {{ end }}
+          
+          <!-- Post content -->
+          <div class="post-content">
+            {{ .Content }}
+          </div>
+          
+          <!-- Back to list button -->
+          <a href="/news" class="btn btn-primary mt-4 btn-arrow"><i class="fas fa-arrow-left me-2"></i> Back to Posts</a>
+        </article>
+      </div>
+      
+      <!-- Sidebar -->
+      {{ $social := hugo.Data.settings.social }}
+      {{ $general := hugo.Data.settings.general }}
+      
+      <div class="col-lg-4 posts-sidebar">
+        <div class="mb-4">
+          <h3>Follow Us</h3>
+          <ul class="list-unstyled d-flex justify-content-start">
+            {{ with $social.whatsapp }}
+            <li class="me-3"><a href="{{ . }}" class="text-decoration-none" target="_blank"><span class="fab fa-whatsapp" style="color: #25D366; font-size: 2.2rem;"></span></a></li>
+            {{ end }}
+            
+            {{ with $social.facebook_url }}
+            <li class="me-3"><a href="{{ . }}" class="text-decoration-none" target="_blank"><span class="fab fa-facebook" style="color: #3b5998; font-size: 2.2rem;"></span></a></li>
+            {{ end }}
+            
+            {{ with $social.twitter }}
+            <li class="me-3"><a href="{{ . }}" class="text-decoration-none" target="_blank"><span class="fab fa-twitter" style="color: #000000; font-size: 2.2rem;"></span></a></li>
+            {{ end }}
+            
+            {{ with $social.youtube_url }}
+            <li><a href="{{ . }}" class="text-decoration-none" target="_blank"><span class="fab fa-youtube" style="color: #FF0000; font-size: 2.2rem;"></span></a></li>
+            {{ end }}
+          </ul>
+        </div>
+        
+        <!-- Facebook Feed -->
+        {{ with $social.facebook_url }}
+        <div class="mb-4">
+          <h3>Our Facebook Page</h3>
+          <div class="fb-page" 
+               data-href="{{ . }}" 
+               data-tabs="timeline" 
+               data-width="" 
+               data-height="500" 
+               data-small-header="false" 
+               data-adapt-container-width="true" 
+               data-hide-cover="false" 
+               data-show-facepile="true">
+              <blockquote cite="{{ . }}" class="fb-xfbml-parse-ignore">
+                  <a href="{{ . }}">{{ $general.title }}</a>
+              </blockquote>
+          </div>
+        </div>
+        {{ end }}
+
+        <!-- TikTok Feed -->
+        {{ with $social.tiktok_url }}
+        <div class="mb-4">
+          <h3>Our TikTok Feed</h3>
+          <blockquote class="tiktok-embed" cite="{{ . }}" 
+                    data-unique-id="{{ replace . `https://www.tiktok.com/@` `` }}" 
+                    data-embed-type="creator" 
+                    style="max-width: 100%; min-width: 288px;" >
+              <section>
+                  <a target="_blank" href="{{ . }}">@{{ replace . `https://www.tiktok.com/@` `` }}</a>
+              </section>
+          </blockquote>
+          <!-- Required script to make the TikTok embed render -->
+          <script async src="https://www.tiktok.com/embed.js"></script>
+        </div>
+        {{ end }}
+        
+        <!-- Fallback if no social feeds exist -->
+        {{ if and (not $social.facebook_url) (not $social.tiktok_url) }}
+        <div class="mb-4 p-4 bg-light text-center rounded shadow-sm">
+          <p class="text-muted mb-0">Follow our social media channels above for the latest updates!</p>
+        </div>
+        {{ end }}
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Latest news section -->
+  {{ partial "sections/latest-news.html" . }}
+{{ end }}
